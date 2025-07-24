@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="ro">
 <head>
-  <meta charset="UTF-8">
-  <title>Generator Imagine AI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Generare Imagine AI cu Replicate</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 2em; }
-    input { width: 60%; padding: 8px; }
-    button { padding: 8px 16px; }
-    img { margin-top: 20px; display: none; }
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    input, button { padding: 0.5rem; font-size: 1rem; }
+    img { max-width: 100%; margin-top: 1rem; border: 1px solid #ccc; }
   </style>
 </head>
 <body>
-  <h1>Generează o Imagine cu AI</h1>
-  <input type="text" id="prompt" placeholder="Descrie ce imagine vrei..." />
-  <button onclick="generate()">Generează</button>
-  <p id="status"></p>
-  <img id="result" width="512">
+  <h1>Generare Imagine AI cu Replicate</h1>
+  <input id="promptInput" type="text" placeholder="Scrie ceva (ex: 'un peisaj fantastic')" size="50" />
+  <button onclick="generateImage()">Generează imagine</button>
+  <div id="result"></div>
 
-<script>
-  async function generate() {
-    const prompt = document.getElementById('prompt').value;
-    document.getElementById('status').innerText = "Se generează...";
-    const res = await fetch('/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
-    });
-    const data = await res.json();
-    if (data.image) {
-      document.getElementById('result').src = data.image;
-      document.getElementById('result').style.display = 'block';
-      document.getElementById('status').innerText = "Imagine generată!";
-    } else {
-      document.getElementById('status').innerText = "Eroare la generare.";
+  <script>
+    async function generateImage() {
+      const prompt = document.getElementById("promptInput").value.trim();
+      if (!prompt) {
+        alert("Te rog să introduci un text.");
+        return;
+      }
+      document.getElementById("result").innerHTML = "Se generează imaginea...";
+
+      try {
+        const res = await fetch("/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt }),
+        });
+        const data = await res.json();
+        if (data.imageUrl) {
+          document.getElementById("result").innerHTML = `<img src="${data.imageUrl}" alt="Imagine generată" />`;
+        } else {
+          document.getElementById("result").innerText = "Eroare la generare.";
+        }
+      } catch (e) {
+        document.getElementById("result").innerText = "Eroare la server.";
+      }
     }
-  }
-</script>
+  </script>
 </body>
 </html>
