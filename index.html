@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Generator Imagine AI</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 2em; }
+    input { width: 60%; padding: 8px; }
+    button { padding: 8px 16px; }
+    img { margin-top: 20px; display: none; }
+  </style>
+</head>
+<body>
+  <h1>Generează o Imagine cu AI</h1>
+  <input type="text" id="prompt" placeholder="Descrie ce imagine vrei..." />
+  <button onclick="generate()">Generează</button>
+  <p id="status"></p>
+  <img id="result" width="512">
+
+<script>
+  async function generate() {
+    const prompt = document.getElementById('prompt').value;
+    document.getElementById('status').innerText = "Se generează...";
+    const res = await fetch('/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (data.image) {
+      document.getElementById('result').src = data.image;
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('status').innerText = "Imagine generată!";
+    } else {
+      document.getElementById('status').innerText = "Eroare la generare.";
+    }
+  }
+</script>
+</body>
+</html>
